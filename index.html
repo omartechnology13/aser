@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assory tech - Web & Video Solutions</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Cairo for Arabic, Inter for English) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f6ff',
+                            100: '#e0edff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#0f172a',
+                            dark: '#0a0f1d'
+                        },
+                        accent: {
+                            purple: '#8b5cf6',
+                            cyan: '#06b6d4',
+                            pink: '#ec4899'
+                        }
+                    },
+                    fontFamily: {
+                        ar: ['Cairo', 'sans-serif'],
+                        en: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', 'Inter', sans-serif;
+            background-color: #070b14;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glow-hover:hover {
+            box-shadow: 0 0 25px 2px rgba(59, 130, 246, 0.35);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Cart Drawer Slide Rules */
+        .cart-overlay {
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .cart-overlay.hidden-overlay {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .cart-overlay.visible-overlay {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .cart-sidebar {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        /* RTL & LTR positioning */
+        html[dir="rtl"] .cart-sidebar {
+            left: 0;
+            right: auto;
+            transform: translateX(-100%);
+        }
+        html[dir="rtl"] .cart-sidebar.open {
+            transform: translateX(0);
+        }
+
+        html[dir="ltr"] .cart-sidebar {
+            right: 0;
+            left: auto;
+            transform: translateX(100%);
+        }
+        html[dir="ltr"] .cart-sidebar.open {
+            transform: translateX(0);
+        }
+
+        /* Dedicated elegant size for alv.png logo (Width: 70px) */
+        .alv-logo-img {
+            width: 70px;
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+            display: inline-block;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        .alv-logo-img:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.6));
+        }
+
+        /* Custom Floating Draggable Badge */
+        #draggable-widget {
+            touch-action: none;
+            user-select: none;
+            cursor: grab;
+            transition: box-shadow 0.2s ease;
+        }
+        #draggable-widget:active {
+            cursor: grabbing;
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070b14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+    <header class="sticky top-0 z-40 glass-panel border-b border-gray-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-accent-purple to-accent-cyan flex items-center justify-center text-white font-black text-xl shadow-lg shadow-brand-500/30">
+                    AT
+                </div>
+                <a href="#" class="text-2xl font-black tracking-wider gradient-text uppercase">
+                    Assory<span class="text-white font-light text-lg">.tech</span>
+                </a>
+            </div>
+
+            <!-- Navbar Links -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold">
+                <a href="#hero" class="text-gray-300 hover:text-brand-400 transition-colors" data-i18n="nav_home">الرئيسية</a>
+                <a href="#videos-section" class="text-gray-300 hover:text-brand-400 transition-colors" data-i18n="nav_videos">الفيديوهات</a>
+                <a href="#websites-section" class="text-gray-300 hover:text-brand-400 transition-colors" data-i18n="nav_websites">المواقع الإلكترونية</a>
+                <a href="#contact" class="text-gray-300 hover:text-brand-400 transition-colors" data-i18n="nav_contact">تواصل معنا</a>
+            </nav>
+
+            <!-- Actions (Language Switcher & Cart Icon) -->
+            <div class="flex items-center gap-4">
+                
+                <!-- Language Button -->
+                <button id="lang-toggle-btn" onclick="toggleLanguage()" class="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-700/80 bg-gray-800/60 hover:bg-gray-700/80 transition-all text-xs font-bold text-gray-200">
+                    <i class="fa-solid fa-globe text-brand-400"></i>
+                    <span id="lang-label">English</span>
+                </button>
+
+                <!-- Cart Button -->
+                <button id="cart-open-btn" onclick="openCart()" aria-label="Open Shopping Cart" class="relative p-2.5 rounded-xl bg-gray-800/80 hover:bg-gray-700 border border-gray-700/80 transition-all text-gray-200 hover:text-white cursor-pointer">
+                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+                    <span id="cart-badge" class="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-brand-600 to-accent-purple text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden border-2 border-gray-900 shadow-md">
+                        0
+                    </span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section id="hero" class="relative py-20 lg:py-28 overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-900/40 via-gray-950 to-gray-950 -z-10"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <span class="inline-block py-1.5 px-4 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-400 text-xs sm:text-sm font-semibold mb-6 uppercase tracking-wider">
+                <i class="fa-solid fa-wand-magic-sparkles mr-2 ml-2"></i> <span data-i18n="hero_badge">خدمات مخصصة بالفيديوهات والمواقع الإلكترونية</span>
+            </span>
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-tight mb-6">
+                <span data-i18n="hero_title_1">صمّم طموحك الرقمي مع</span> <br class="hidden sm:inline">
+                <span class="gradient-text" data-i18n="hero_title_2">Assory tech</span>
+            </h1>
+            <p class="max-w-2xl mx-auto text-gray-400 text-base sm:text-lg mb-10 leading-relaxed" data-i18n="hero_desc">
+                متخصصون في إنتاج وصناعة الفيديوهات المبتكرة بمختلف الأحجام، بالإضافة لبناء وتطوير المواقع الإلكترونية للشركات والمشاريع بمختلف أحجامها.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#videos-section" class="px-8 py-3.5 rounded-xl bg-gradient-to-r from-brand-600 to-accent-purple text-white font-bold hover:shadow-lg hover:shadow-brand-500/25 transition-all transform hover:-translate-y-0.5">
+                    <span data-i18n="hero_btn_videos">استعرض الفيديوهات</span>
+                </a>
+                <a href="#websites-section" class="px-8 py-3.5 rounded-xl glass-panel border border-gray-700 text-gray-200 font-bold hover:bg-gray-800 transition-all">
+                    <span data-i18n="hero_btn_websites">باقات المواقع</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="videos-section" class="py-16 bg-gray-950/80 border-t border-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 text-pink-400 border border-pink-500/20 text-xs font-bold mb-3">
+                    <i class="fa-solid fa-clapperboard"></i>
+                    <span data-i18n="cat_videos_badge">خدمات المونتاج وإنتاج المرئيات</span>
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-3" data-i18n="videos_title">باقات الفيديوهات (3 أحجام)</h2>
+                <p class="text-gray-400 max-w-xl mx-auto text-sm sm:text-base" data-i18n="videos_subtitle">اختر حجم الفيديو المناسب لمشروعك وإعلاناتك التجارية.</p>
+            </div>
+
+            <!-- Videos Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Video 1: Small Video -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 glow-hover border border-gray-800">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-pink-500 to-rose-500 flex items-center justify-center text-white text-xl mb-5 shadow-md shadow-pink-500/20">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2" data-i18n="v1_title">فيديو صغير (Small Video)</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm mb-6 leading-relaxed" data-i18n="v1_desc">فيديو قصير حتى 30 ثانية مناسب للستوري، الريلز، وإعلانات تيك توك وسناب شات مع تحرير سريع ومؤثرات جيدة.</p>
+                    </div>
+                    <div>
+                        <div class="mb-4 pt-4 border-t border-gray-800/80 flex justify-between items-center">
+                            <span class="text-xs text-gray-400" data-i18n="price_label">السعر:</span>
+                            <span class="text-xs font-bold text-pink-400 bg-pink-500/10 px-3 py-1 rounded-full border border-pink-500/20">undefined</span>
+                        </div>
+                        <button onclick="addToCart('Small Video', 'فيديو صغير')" class="w-full py-3 rounded-xl bg-gray-800 hover:bg-pink-600 text-white font-semibold transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-cart-plus text-xs"></i>
+                            <span data-i18n="add_to_cart">أضف للسلة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Video 2: Medium Video -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 glow-hover border border-gray-800">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-white text-xl mb-5 shadow-md shadow-purple-500/20">
+                            <i class="fa-solid fa-film"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2" data-i18n="v2_title">فيديو متوسط (Medium Video)</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm mb-6 leading-relaxed" data-i18n="v2_desc">فيديو إعلاني أو تعريفي حتى دقيقتين مع مونتاج احترافي، كتابة نصوص، إضافة مؤثرات صوتية وبصرية جذابة.</p>
+                    </div>
+                    <div>
+                        <div class="mb-4 pt-4 border-t border-gray-800/80 flex justify-between items-center">
+                            <span class="text-xs text-gray-400" data-i18n="price_label">السعر:</span>
+                            <span class="text-xs font-bold text-purple-400 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20">undefined</span>
+                        </div>
+                        <button onclick="addToCart('Medium Video', 'فيديو متوسط')" class="w-full py-3 rounded-xl bg-gray-800 hover:bg-purple-600 text-white font-semibold transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-cart-plus text-xs"></i>
+                            <span data-i18n="add_to_cart">أضف للسلة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Video 3: Large Video -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 glow-hover border border-gray-800">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-rose-600 to-orange-500 flex items-center justify-center text-white text-xl mb-5 shadow-md shadow-rose-500/20">
+                            <i class="fa-solid fa-video"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2" data-i18n="v3_title">فيديو كبير (Large Video)</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm mb-6 leading-relaxed" data-i18n="v3_desc">فيديو متكامل أو وثائقي/ترويجي طويل (أكثر من دقيقتين) يتضمن خدع بصرية، تصحيح ألوان متقدم، ومؤثرات سينمائية.</p>
+                    </div>
+                    <div>
+                        <div class="mb-4 pt-4 border-t border-gray-800/80 flex justify-between items-center">
+                            <span class="text-xs text-gray-400" data-i18n="price_label">السعر:</span>
+                            <span class="text-xs font-bold text-rose-400 bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/20">undefined</span>
+                        </div>
+                        <button onclick="addToCart('Large Video', 'فيديو كبير')" class="w-full py-3 rounded-xl bg-gray-800 hover:bg-rose-600 text-white font-semibold transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-cart-plus text-xs"></i>
+                            <span data-i18n="add_to_cart">أضف للسلة</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="websites-section" class="py-16 bg-gray-950">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20 text-xs font-bold mb-3">
+                    <i class="fa-solid fa-code"></i>
+                    <span data-i18n="cat_websites_badge">برمجة وتصميم المواقع</span>
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-3" data-i18n="websites_title">باقات المواقع (3 أحجام)</h2>
+                <p class="text-gray-400 max-w-xl mx-auto text-sm sm:text-base" data-i18n="websites_subtitle">اختر حجم الموقع المناسب لنشاطك التجاري أو شركتك.</p>
+            </div>
+
+            <!-- Websites Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Web 1: Small Website -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 glow-hover border border-gray-800">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-500 flex items-center justify-center text-white text-xl mb-5 shadow-md shadow-cyan-500/20">
+                            <i class="fa-solid fa-laptop-code"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2" data-i18n="w1_title">موقع صغير (Small Website)</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm mb-6 leading-relaxed" data-i18n="w1_desc">صفحة هبوط واحدة (Landing Page) بتصميم جذاب واستجابة كاملة للهواتف مع أزرار تواصل مباشرة.</p>
+                    </div>
+                    <div>
+                        <div class="mb-4 pt-4 border-t border-gray-800/80 flex justify-between items-center">
+                            <span class="text-xs text-gray-400" data-i18n="price_label">السعر:</span>
+                            <span class="text-xs font-bold text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">undefined</span>
+                        </div>
+                        <button onclick="addToCart('Small Website', 'موقع صغير')" class="w-full py-3 rounded-xl bg-gray-800 hover:bg-cyan-600 text-white font-semibold transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-cart-plus text-xs"></i>
+                            <span data-i18n="add_to_cart">أضف للسلة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Web 2: Medium Website -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 glow-hover border border-brand-500/50 relative">
+                    <span class="absolute -top-3 right-4 bg-brand-600 text-white text-[10px] font-black px-3 py-1 rounded-full tracking-wider uppercase" data-i18n="popular_tag">الأكثر طلباً</span>
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-brand-600 to-accent-purple flex items-center justify-center text-white text-xl mb-5 shadow-md shadow-brand-500/20">
+                            <i class="fa-solid fa-sitemap"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2" data-i18n="w2_title">موقع متوسط (Medium Website)</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm mb-6 leading-relaxed" data-i18n="w2_desc">موقع يحتوي على عدة صفحات (حتى 5 صفحات) مثل: الرئيسية، خدماتنا، من نحن، اتصل بنا، ولوحة تحكم مدعومة.</p>
+                    </div>
+                    <div>
+                        <div class="mb-4 pt-4 border-t border-gray-800/80 flex justify-between items-center">
+                            <span class="text-xs text-gray-400" data-i18n="price_label">السعر:</span>
+                            <span class="text-xs font-bold text-brand-400 bg-brand-500/10 px-3 py-1 rounded-full border border-brand-500/20">undefined</span>
+                        </div>
+                        <button onclick="addToCart('Medium Website', 'موقع متوسط')" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand-600/20">
+                            <i class="fa-solid fa-cart-plus text-xs"></i>
+                            <span data-i18n="add_to_cart">أضف للسلة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Web 3: Big Website -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 glow-hover border border-gray-800">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-white text-xl mb-5 shadow-md shadow-amber-500/20">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2" data-i18n="w3_title">موقع كبير (Big Website)</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm mb-6 leading-relaxed" data-i18n="w3_desc">منصة ضخمة أو متجر إلكتروني متعدد الخصائص والمنتجات مع ربط قواعد البيانات وخصائص مخصصة بالكامل.</p>
+                    </div>
+                    <div>
+                        <div class="mb-4 pt-4 border-t border-gray-800/80 flex justify-between items-center">
+                            <span class="text-xs text-gray-400" data-i18n="price_label">السعر:</span>
+                            <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">undefined</span>
+                        </div>
+                        <button onclick="addToCart('Big Website', 'موقع كبير')" class="w-full py-3 rounded-xl bg-gray-800 hover:bg-amber-600 text-white font-semibold transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-cart-plus text-xs"></i>
+                            <span data-i18n="add_to_cart">أضف للسلة</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <div id="cart-overlay" onclick="closeCart()" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 cart-overlay hidden-overlay"></div>
+
+    <aside id="cart-sidebar" class="fixed top-0 bottom-0 w-full max-w-md bg-gray-900 border-x border-gray-800/80 z-50 cart-sidebar flex flex-col justify-between shadow-2xl">
+        
+        <!-- Cart Header -->
+        <div class="p-6 border-b border-gray-800 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-cart-shopping text-brand-500 text-xl"></i>
+                <h3 class="text-xl font-extrabold text-white" data-i18n="cart_title">سلة الشراء</h3>
+            </div>
+            <button onclick="closeCart()" class="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-gray-800 transition-colors">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Cart Items List Container -->
+        <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4">
+            <!-- Dynamic items rendered via JavaScript -->
+        </div>
+
+        <!-- Empty Cart Message -->
+        <div id="cart-empty-state" class="hidden flex-1 flex flex-col items-center justify-center p-6 text-center">
+            <div class="w-16 h-16 rounded-full bg-gray-800/80 flex items-center justify-center text-gray-600 mb-4 text-2xl">
+                <i class="fa-solid fa-basket-shopping"></i>
+            </div>
+            <p class="text-gray-400 text-sm font-medium" data-i18n="cart_empty">السلة فارغة حالياً، أضف باقاتك المفضلة!</p>
+        </div>
+
+        <!-- Cart Footer Form & Checkout -->
+        <div class="p-6 border-t border-gray-800 bg-gray-950/90 space-y-4">
+            
+            <!-- Grand Total Row -->
+            <div class="flex justify-between items-center text-sm font-semibold pb-2 border-b border-gray-800/60">
+                <span class="text-gray-400" data-i18n="cart_grand_total">الإجمالي الكلي:</span>
+                <span class="text-base font-bold text-brand-400">undefined</span>
+            </div>
+
+            <!-- Customer Details Input Form -->
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1" data-i18n="form_name">اسم العميل:</label>
+                    <input type="text" id="cust-name" placeholder="أدخل اسمك الكريم" class="w-full px-4 py-2.5 rounded-xl bg-gray-800/90 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1" data-i18n="form_phone">رقم الجوال:</label>
+                    <input type="tel" id="cust-phone" placeholder="05xxxxxxxx" class="w-full px-4 py-2.5 rounded-xl bg-gray-800/90 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 text-sm">
+                </div>
+            </div>
+
+            <!-- Validation Alert -->
+            <div id="cart-error-msg" class="hidden text-xs text-rose-400 bg-rose-500/10 p-3 rounded-xl border border-rose-500/20 font-medium"></div>
+
+            <!-- Send via WhatsApp Button (Direct number 966546455248) -->
+            <button onclick="sendOrderToWhatsApp()" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 active:scale-[0.98]">
+                <i class="fa-brands fa-whatsapp text-xl"></i>
+                <span data-i18n="btn_send_whatsapp">إرسال الطلب عبر الواتساب</span>
+            </button>
+        </div>
+    </aside>
+
+    <section id="contact" class="py-16 border-t border-gray-900 bg-gray-950/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            
+            <h2 class="text-3xl font-extrabold text-white mb-8" data-i18n="contact_title">تواصل واشترك معنا</h2>
+
+            <div class="flex flex-wrap justify-center gap-6">
+                <!-- WhatsApp Contact Link (Direct format 966546455248 without 00) -->
+                <a href="https://wa.me/966546455248" target="_blank" class="flex items-center gap-3 px-7 py-4 rounded-2xl glass-panel border border-emerald-500/30 hover:border-emerald-500 bg-emerald-500/10 hover:bg-emerald-500/20 transition-all text-emerald-400 font-bold group">
+                    <i class="fa-brands fa-whatsapp text-2xl group-hover:scale-110 transition-transform"></i>
+                    <span>Contact us WhatsApp</span>
+                </a>
+
+                <!-- YouTube Subscribe Link -->
+                <a href="https://youtube.com/@asseryoussef-i1w?si=qWkD2cvDTP5yEBXi" target="_blank" class="flex items-center gap-3 px-7 py-4 rounded-2xl glass-panel border border-rose-500/30 hover:border-rose-500 bg-rose-500/10 hover:bg-rose-500/20 transition-all text-rose-400 font-bold group">
+                    <i class="fa-brands fa-youtube text-2xl group-hover:scale-110 transition-transform"></i>
+                    <span>Subscribe YouTube</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating Draggable Side Badge Widget (Interactive) -->
+    <div id="draggable-widget" class="fixed top-1/3 left-4 z-30 p-2.5 rounded-2xl glass-panel border border-brand-500/30 bg-gray-900/90 shadow-2xl flex items-center gap-3">
+        <i class="fa-solid fa-grip-vertical text-gray-500 text-xs"></i>
+        <div class="flex flex-col text-left">
+            <span class="text-[10px] text-gray-400 font-semibold tracking-tight">designed and powered by</span>
+            <span class="text-xs font-bold text-brand-400">alvexos</span>
+        </div>
+        <img src="alv.png" alt="alv.png" class="alv-logo-img" onerror="this.onerror=null; this.src='https://placehold.co/70x25/0f172a/ffffff?text=alv.png';">
+    </div>
+
+    <footer class="py-12 bg-gray-950 border-t border-gray-900 text-center text-xs sm:text-sm text-gray-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center gap-5">
+            
+            <!-- Company Info -->
+            <div class="flex items-center gap-2">
+                <span class="font-extrabold text-white">Assory tech</span>
+                <span>&copy; 2026. All rights reserved.</span>
+            </div>
+
+            <!-- Powered by Link & Compact Logo -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 bg-gray-900/90 px-6 py-3.5 rounded-2xl border border-gray-800/80">
+                <span class="text-gray-400">this website is powered and designed by</span>
+                <a href="https://Alvexos.netlify.app" target="_blank" class="text-brand-400 hover:text-brand-300 font-bold underline decoration-brand-500/40 hover:decoration-brand-400 transition-colors">
+                    alvexos technological co
+                </a>
+                <img src="alv.png" alt="alv.png" class="alv-logo-img" onerror="this.onerror=null; this.src='https://placehold.co/70x25/0f172a/ffffff?text=alv.png';">
+            </div>
+
+        </div>
+    </footer>
+
+    <script>
+        // Store language state and shopping cart data
+        let currentLang = 'ar';
+        let cart = [];
+
+        // Dictionary Translation Data
+        const translations = {
+            ar: {
+                nav_home: "الرئيسية",
+                nav_videos: "الفيديوهات",
+                nav_websites: "المواقع الإلكترونية",
+                nav_contact: "تواصل معنا",
+                hero_badge: "خدمات مخصصة بالفيديوهات والمواقع الإلكترونية",
+                hero_title_1: "صمّم طموحك الرقمي مع",
+                hero_title_2: "Assory tech",
+                hero_desc: "متخصصون في إنتاج وصناعة الفيديوهات المبتكرة بمختلف الأحجام، بالإضافة لبناء وتطوير المواقع الإلكترونية للشركات والمشاريع بمختلف أحجامها.",
+                hero_btn_videos: "استعرض الفيديوهات",
+                hero_btn_websites: "باقات المواقع",
+                cat_videos_badge: "خدمات المونتاج وإنتاج المرئيات",
+                videos_title: "باقات الفيديوهات (3 أحجام)",
+                videos_subtitle: "اختر حجم الفيديو المناسب لمشروعك وإعلاناتك التجارية.",
+                v1_title: "فيديو صغير (Small Video)",
+                v1_desc: "فيديو قصير حتى 30 ثانية مناسب للستوري، الريلز، وإعلانات تيك توك وسناب شات مع تحرير سريع ومؤثرات جيدة.",
+                v2_title: "فيديو متوسط (Medium Video)",
+                v2_desc: "فيديو إعلاني أو تعريفي حتى دقيقتين مع مونتاج احترافي، كتابة نصوص، إضافة مؤثرات صوتية وبصرية جذابة.",
+                v3_title: "فيديو كبير (Large Video)",
+                v3_desc: "فيديو متكامل أو وثائقي/ترويجي طويل (أكثر من دقيقتين) يتضمن خدع بصرية، تصحيح ألوان متقدم، ومؤثرات سينمائية.",
+                cat_websites_badge: "برمجة وتصميم المواقع",
+                websites_title: "باقات المواقع (3 أحجام)",
+                websites_subtitle: "اختر حجم الموقع المناسب لنشاطك التجاري أو شركتك.",
+                w1_title: "موقع صغير (Small Website)",
+                w1_desc: "صفحة هبوط واحدة (Landing Page) بتصميم جذاب واستجابة كاملة للهواتف مع أزرار تواصل مباشرة.",
+                w2_title: "موقع متوسط (Medium Website)",
+                w2_desc: "موقع يحتوي على عدة صفحات (حتى 5 صفحات) مثل: الرئيسية، خدماتنا، من نحن، اتصل بنا، ولوحة تحكم مدعومة.",
+                w3_title: "موقع كبير (Big Website)",
+                w3_desc: "منصة ضخمة أو متجر إلكتروني متعدد الخصائص والمنتجات مع ربط قواعد البيانات وخصائص مخصصة بالكامل.",
+                popular_tag: "الأكثر طلباً",
+                price_label: "السعر:",
+                add_to_cart: "أضف للسلة",
+                cart_title: "سلة الشراء",
+                cart_empty: "السلة فارغة حالياً، أضف باقاتك المفضلة!",
+                cart_grand_total: "الإجمالي الكلي:",
+                form_name: "اسم العميل:",
+                form_phone: "رقم الجوال:",
+                btn_send_whatsapp: "إرسال الطلب عبر الواتساب",
+                contact_title: "تواصل واشترك معنا",
+                err_validation: "يرجى كتابة الاسم ورقم الجوال وإضافة منتج واحد على الأقل بالسلة.",
+                lang_btn: "English"
+            },
+            en: {
+                nav_home: "Home",
+                nav_videos: "Videos",
+                nav_websites: "Websites",
+                nav_contact: "Contact Us",
+                hero_badge: "Custom Video & Web Development Services",
+                hero_title_1: "Design Your Digital Ambition With",
+                hero_title_2: "Assory tech",
+                hero_desc: "Specialized in producing creative videos of all sizes, along with designing and building full-featured websites for businesses and startups.",
+                hero_btn_videos: "Browse Videos",
+                hero_btn_websites: "Website Packages",
+                cat_videos_badge: "Video Editing & Production",
+                videos_title: "Video Packages (3 Sizes)",
+                videos_subtitle: "Choose the ideal video format and length for your brand or campaign.",
+                v1_title: "Small Video",
+                v1_desc: "Short video under 30s ideal for Stories, Reels, TikTok & Snapchat ads with crisp transitions and motion.",
+                v2_title: "Medium Video",
+                v2_desc: "Commercial promo video up to 2 mins with professional editing, copywriting, and engaging visual SFX.",
+                v3_title: "Large Video",
+                v3_desc: "Comprehensive cinematic video (over 2 mins) including VFX, advanced color grading, and custom audio mixing.",
+                cat_websites_badge: "Web Design & Development",
+                websites_title: "Website Packages (3 Sizes)",
+                websites_subtitle: "Select the website tier tailored to your business goals.",
+                w1_title: "Small Website",
+                w1_desc: "Single high-converting Landing Page with responsive mobile design and direct call-to-actions.",
+                w2_title: "Medium Website",
+                w2_desc: "Multi-page website (up to 5 pages) including Home, Services, About, Contact, and basic dashboard.",
+                w3_title: "Big Website",
+                w3_desc: "Full e-commerce platform or custom Web Application with database integration and rich features.",
+                popular_tag: "MOST POPULAR",
+                price_label: "Price:",
+                add_to_cart: "Add to Cart",
+                cart_title: "Shopping Cart",
+                cart_empty: "Your cart is empty. Add services to proceed!",
+                cart_grand_total: "Grand Total:",
+                form_name: "Customer Name:",
+                form_phone: "Phone Number:",
+                btn_send_whatsapp: "Send Order via WhatsApp",
+                contact_title: "Connect & Subscribe",
+                err_validation: "Please enter your Name, Phone Number, and add at least 1 service to the cart.",
+                lang_btn: "عربي"
+            }
+        };
+
+        // Toggle Language (Arabic / English)
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+            // Update Language Switcher Text
+            document.getElementById('lang-label').innerText = translations[currentLang].lang_btn;
+
+            // Translate Text Elements
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    el.innerText = translations[currentLang][key];
+                }
+            });
+
+            // Re-render Cart with updated language terms
+            renderCart();
+        }
+
+        // Open Shopping Cart Drawer
+        function openCart() {
+            const overlay = document.getElementById('cart-overlay');
+            const sidebar = document.getElementById('cart-sidebar');
+            
+            overlay.classList.remove('hidden-overlay');
+            overlay.classList.add('visible-overlay');
+            sidebar.classList.add('open');
+        }
+
+        // Close Shopping Cart Drawer
+        function closeCart() {
+            const overlay = document.getElementById('cart-overlay');
+            const sidebar = document.getElementById('cart-sidebar');
+            
+            overlay.classList.remove('visible-overlay');
+            overlay.classList.add('hidden-overlay');
+            sidebar.classList.remove('open');
+        }
+
+        // Add Product To Cart
+        function addToCart(enName, arName) {
+            const index = cart.findIndex(item => item.enName === enName);
+            if (index > -1) {
+                cart[index].qty += 1;
+            } else {
+                cart.push({
+                    enName: enName,
+                    arName: arName,
+                    qty: 1
+                });
+            }
+            updateCartBadge();
+            renderCart();
+            openCart();
+        }
+
+        // Change Item Quantity
+        function updateItemQty(index, delta) {
+            if (cart[index]) {
+                cart[index].qty += delta;
+                if (cart[index].qty <= 0) {
+                    cart.splice(index, 1);
+                }
+            }
+            updateCartBadge();
+            renderCart();
+        }
+
+        // Remove Item
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCartBadge();
+            renderCart();
+        }
+
+        // Update Header Cart Badge
+        function updateCartBadge() {
+            const badge = document.getElementById('cart-badge');
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            
+            if (totalQty > 0) {
+                badge.innerText = totalQty;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        // Render Cart HTML Content
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            const emptyState = document.getElementById('cart-empty-state');
+
+            container.innerHTML = '';
+
+            if (cart.length === 0) {
+                emptyState.classList.remove('hidden');
+                container.classList.add('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            container.classList.remove('hidden');
+
+            cart.forEach((item, idx) => {
+                const displayName = currentLang === 'ar' ? item.arName : item.enName;
+                const card = document.createElement('div');
+                card.className = "bg-gray-800/70 p-4 rounded-xl border border-gray-700/80 flex items-center justify-between gap-3 shadow-sm";
+                
+                card.innerHTML = `
+                    <div class="flex-1">
+                        <h4 class="text-sm font-bold text-white mb-1">${displayName}</h4>
+                        <div class="text-xs text-gray-400">
+                            <span>Qty: ${item.qty} ✖️ Price: not defined</span>
+                        </div>
+                        <div class="text-xs text-brand-400 font-semibold mt-1">
+                            Subtotal: undefined
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center bg-gray-900 border border-gray-700 rounded-lg overflow-hidden">
+                            <button onclick="updateItemQty(${idx}, -1)" class="px-2.5 py-1 text-gray-300 hover:bg-gray-800 font-bold text-sm transition-colors">-</button>
+                            <span class="px-2 text-xs font-bold text-white">${item.qty}</span>
+                            <button onclick="updateItemQty(${idx}, 1)" class="px-2.5 py-1 text-gray-300 hover:bg-gray-800 font-bold text-sm transition-colors">+</button>
+                        </div>
+                        <button onclick="removeItem(${idx})" class="p-2 text-rose-400 hover:text-rose-300 transition-colors" title="Remove">
+                            <i class="fa-solid fa-trash-can text-sm"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Generate and Send WhatsApp Message
+        function sendOrderToWhatsApp() {
+            const name = document.getElementById('cust-name').value.trim();
+            const phone = document.getElementById('cust-phone').value.trim();
+            const errorMsg = document.getElementById('cart-error-msg');
+
+            if (!name || !phone || cart.length === 0) {
+                errorMsg.innerText = translations[currentLang].err_validation;
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            errorMsg.classList.add('hidden');
+
+            // Constructing exact requested WhatsApp order template
+            let itemsListFormatted = '';
+            cart.forEach((item, index) => {
+                itemsListFormatted += `*${index + 1}) ${item.enName}*\n`;
+                itemsListFormatted += `   Qty: ${item.qty} ✖️ Price: not defined \n`;
+                itemsListFormatted += `   Subtotal:\n\n`;
+            });
+
+            const whatsappMessage = `🤖 *New Order from Assory tech
+--------------------------------------
+👤 *Customer Name:* ${name}
+📞 *Phone Number:* ${phone}
+--------------------------------------
+
+${itemsListFormatted}--------------------------------------
+💰 *Grand Total:* 
+
+Please confirm and process the order as soon as possible 👍.
+(All of this services provided by alvexos technological company)`;
+
+            const encodedMessage = encodeURIComponent(whatsappMessage);
+            // Updated phone number: 966546455248 (without 00)
+            const targetPhone = "966546455248";
+            const whatsappUrl = `https://wa.me/${targetPhone}?text=${encodedMessage}`;
+
+            // Open WhatsApp in new tab
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Make floating side badge widget draggable
+        const widget = document.getElementById('draggable-widget');
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        widget.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            offsetX = e.clientX - widget.getBoundingClientRect().left;
+            offsetY = e.clientY - widget.getBoundingClientRect().top;
+            widget.style.transition = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            let left = e.clientX - offsetX;
+            let top = e.clientY - offsetY;
+
+            // Constrain inside viewport boundaries
+            left = Math.max(10, Math.min(window.innerWidth - widget.offsetWidth - 10, left));
+            top = Math.max(10, Math.min(window.innerHeight - widget.offsetHeight - 10, top));
+
+            widget.style.left = `${left}px`;
+            widget.style.top = `${top}px`;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Touch event handlers for mobile dragging
+        widget.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            const touch = e.touches[0];
+            offsetX = touch.clientX - widget.getBoundingClientRect().left;
+            offsetY = touch.clientY - widget.getBoundingClientRect().top;
+            widget.style.transition = 'none';
+        }, { passive: true });
+
+        document.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const touch = e.touches[0];
+            let left = touch.clientX - offsetX;
+            let top = touch.clientY - offsetY;
+
+            left = Math.max(10, Math.min(window.innerWidth - widget.offsetWidth - 10, left));
+            top = Math.max(10, Math.min(window.innerHeight - widget.offsetHeight - 10, top));
+
+            widget.style.left = `${left}px`;
+            widget.style.top = `${top}px`;
+        }, { passive: true });
+
+        document.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+    </script>
+</body>
+</html>
